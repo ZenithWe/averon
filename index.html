@@ -3,1636 +3,578 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AVERON — Dominate or Be Forgotten</title>
+<title>AVERON</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --void: #0A0A0F;
-    --deep: #0F0718;
-    --purple-dark: #1A0A2E;
-    --purple-mid: #2D1060;
-    --neon: #7B2FFF;
-    --neon-bright: #A855F7;
-    --neon-soft: #C084FC;
-    --magenta: #D946EF;
-    --white-cold: #E2D9F3;
-    --white-dim: #9CA3B0;
-    --border: rgba(123,47,255,0.25);
-  }
-
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-  html { scroll-behavior: smooth; }
-
-  body {
-    background: var(--void);
-    color: var(--white-cold);
-    font-family: 'Inter', sans-serif;
-    overflow-x: hidden;
-  }
-
-  /* ── SCANLINE OVERLAY ── */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0,0,0,0.07) 2px,
-      rgba(0,0,0,0.07) 4px
-    );
-    pointer-events: none;
-    z-index: 9999;
-  }
-
-  /* ── NAV ── */
-  nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 clamp(1.5rem, 5vw, 4rem);
-    height: 70px;
-    background: rgba(10,10,15,0.85);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-    transition: background 0.3s;
-  }
-
-  .nav-logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 2rem;
-    letter-spacing: 4px;
-    color: var(--white-cold);
-    text-decoration: none;
-    position: relative;
-  }
-  .nav-logo span {
-    color: var(--neon-bright);
-    text-shadow: 0 0 20px var(--neon), 0 0 40px var(--neon);
-  }
-
-  .nav-links {
-    display: flex;
-    gap: 2.5rem;
-    list-style: none;
-  }
-  .nav-links a {
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 600;
-    font-size: 0.9rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--white-dim);
-    text-decoration: none;
-    transition: color 0.2s;
-    position: relative;
-  }
-  .nav-links a::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 0;
-    height: 1px;
-    background: var(--neon-bright);
-    box-shadow: 0 0 8px var(--neon);
-    transition: width 0.3s;
-  }
-  .nav-links a:hover { color: var(--white-cold); }
-  .nav-links a:hover::after { width: 100%; }
-
-  .nav-cta {
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 700;
-    font-size: 0.85rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--void);
-    background: var(--neon-bright);
-    border: none;
-    padding: 0.55rem 1.4rem;
-    cursor: pointer;
-    text-decoration: none;
-    transition: box-shadow 0.2s, transform 0.15s;
-    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
-  }
-  .nav-cta:hover {
-    box-shadow: 0 0 20px var(--neon), 0 0 40px var(--neon);
-    transform: translateY(-1px);
-  }
-
-  .hamburger {
-    display: none;
-    flex-direction: column;
-    gap: 5px;
-    cursor: pointer;
-    background: none;
-    border: none;
-    padding: 4px;
-  }
-  .hamburger span {
-    display: block;
-    width: 24px;
-    height: 2px;
-    background: var(--white-cold);
-    transition: all 0.3s;
-  }
-
-  /* ── HERO ── */
-  #hero {
-    position: relative;
-    height: 100vh;
-    min-height: 600px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-  }
-
-  .hero-bg {
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 80% 60% at 50% 40%, rgba(123,47,255,0.18) 0%, transparent 70%),
-      radial-gradient(ellipse 40% 40% at 80% 20%, rgba(217,70,239,0.1) 0%, transparent 60%),
-      linear-gradient(180deg, var(--deep) 0%, var(--void) 100%);
-  }
-
-  /* Animated grid */
-  .hero-grid {
-    position: absolute;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(123,47,255,0.08) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(123,47,255,0.08) 1px, transparent 1px);
-    background-size: 60px 60px;
-    animation: gridMove 20s linear infinite;
-    mask-image: linear-gradient(180deg, transparent 0%, black 30%, black 70%, transparent 100%);
-  }
-  @keyframes gridMove {
-    0% { transform: translateY(0); }
-    100% { transform: translateY(60px); }
-  }
-
-  /* V mark */
-  .hero-vmark {
-    position: absolute;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(18rem, 35vw, 48rem);
-    color: transparent;
-    -webkit-text-stroke: 1px rgba(123,47,255,0.12);
-    line-height: 1;
-    user-select: none;
-    pointer-events: none;
-    letter-spacing: -0.05em;
-    animation: vPulse 4s ease-in-out infinite;
-  }
-  @keyframes vPulse {
-    0%, 100% { -webkit-text-stroke: 1px rgba(123,47,255,0.12); }
-    50% { -webkit-text-stroke: 1px rgba(168,85,247,0.22); }
-  }
-
-  .hero-content {
-    position: relative;
-    z-index: 10;
-    text-align: center;
-    padding: 0 1.5rem;
-  }
-
-  .hero-eyebrow {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 0.8rem;
-    letter-spacing: 6px;
-    text-transform: uppercase;
-    color: var(--neon-soft);
-    margin-bottom: 1rem;
-    opacity: 0;
-    animation: fadeUp 0.8s 0.2s forwards;
-  }
-
-  .hero-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(4.5rem, 15vw, 14rem);
-    line-height: 0.9;
-    letter-spacing: 0.04em;
-    color: var(--white-cold);
-    text-shadow:
-      0 0 60px rgba(123,47,255,0.4),
-      0 0 120px rgba(123,47,255,0.15);
-    opacity: 0;
-    animation: fadeUp 0.8s 0.4s forwards;
-  }
-  .hero-title span {
-    color: var(--neon-bright);
-    text-shadow:
-      0 0 30px var(--neon),
-      0 0 80px var(--neon),
-      0 0 160px rgba(123,47,255,0.5);
-  }
-
-  .hero-slogan {
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 500;
-    font-size: clamp(1rem, 2.5vw, 1.4rem);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--white-dim);
-    margin-top: 1rem;
-    opacity: 0;
-    animation: fadeUp 0.8s 0.6s forwards;
-  }
-
-  .hero-buttons {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    flex-wrap: wrap;
-    margin-top: 2.5rem;
-    opacity: 0;
-    animation: fadeUp 0.8s 0.8s forwards;
-  }
-
-  .btn-primary {
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 700;
-    font-size: 0.9rem;
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
-    color: var(--void);
-    background: linear-gradient(135deg, var(--neon-bright), var(--neon));
-    border: none;
-    padding: 0.9rem 2.2rem;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-    clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
-    transition: box-shadow 0.2s, transform 0.15s;
-    position: relative;
-  }
-  .btn-primary:hover {
-    box-shadow: 0 0 30px var(--neon), 0 0 60px rgba(123,47,255,0.4);
-    transform: translateY(-2px);
-  }
-
-  .btn-secondary {
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 700;
-    font-size: 0.9rem;
-    letter-spacing: 2.5px;
-    text-transform: uppercase;
-    color: var(--neon-bright);
-    background: transparent;
-    border: 1px solid rgba(123,47,255,0.5);
-    padding: 0.9rem 2.2rem;
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-    clip-path: polygon(12px 0%, 100% 0%, calc(100% - 12px) 100%, 0% 100%);
-    transition: all 0.2s;
-  }
-  .btn-secondary:hover {
-    background: rgba(123,47,255,0.12);
-    border-color: var(--neon-bright);
-    box-shadow: 0 0 20px rgba(123,47,255,0.3);
-    transform: translateY(-2px);
-  }
-
-  .hero-scroll {
-    position: absolute;
-    bottom: 2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.4rem;
-    opacity: 0;
-    animation: fadeUp 0.8s 1.2s forwards;
-  }
-  .hero-scroll span {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 0.7rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--white-dim);
-  }
-  .scroll-line {
-    width: 1px;
-    height: 40px;
-    background: linear-gradient(to bottom, var(--neon-bright), transparent);
-    animation: scrollPulse 1.5s ease-in-out infinite;
-  }
-  @keyframes scrollPulse {
-    0%, 100% { opacity: 0.4; height: 40px; }
-    50% { opacity: 1; height: 55px; }
-  }
-
-  /* ── STATS RIBBON ── */
-  .stats-ribbon {
-    background: var(--purple-dark);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    padding: 1.5rem 0;
-    overflow: hidden;
-  }
-  .stats-ribbon-inner {
-    display: flex;
-    justify-content: center;
-    gap: clamp(2rem, 6vw, 6rem);
-    flex-wrap: wrap;
-    padding: 0 2rem;
-  }
-  .stat-item {
-    text-align: center;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.5s;
-  }
-  .stat-item.visible { opacity: 1; transform: translateY(0); }
-  .stat-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 2.2rem;
-    color: var(--neon-bright);
-    text-shadow: 0 0 20px var(--neon);
-    line-height: 1;
-  }
-  .stat-label {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 0.75rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--white-dim);
-    margin-top: 0.2rem;
-  }
-
-  /* ── SECTIONS ── */
-  section { padding: clamp(4rem, 8vw, 7rem) clamp(1.5rem, 5vw, 4rem); }
-
-  .section-eyebrow {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 0.75rem;
-    letter-spacing: 5px;
-    text-transform: uppercase;
-    color: var(--neon-bright);
-    margin-bottom: 0.6rem;
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-  }
-  .section-eyebrow::before {
-    content: '';
-    display: block;
-    width: 24px;
-    height: 1px;
-    background: var(--neon-bright);
-    box-shadow: 0 0 8px var(--neon);
-  }
-
-  .section-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(2.8rem, 6vw, 5rem);
-    letter-spacing: 2px;
-    line-height: 1;
-    margin-bottom: 1.5rem;
-  }
-
-  .section-desc {
-    font-size: 1rem;
-    line-height: 1.7;
-    color: var(--white-dim);
-    max-width: 560px;
-  }
-
-  /* ── RESULTS ── */
-  #resultados { background: var(--void); }
-
-  .results-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
-    margin-top: 3rem;
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .result-card {
-    background: var(--deep);
-    border: 1px solid var(--border);
-    padding: 2rem;
-    position: relative;
-    overflow: hidden;
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.5s;
-  }
-  .result-card.visible { opacity: 1; transform: translateY(0); }
-  .result-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 3px; height: 100%;
-    background: linear-gradient(to bottom, var(--neon-bright), transparent);
-  }
-  .result-card:hover {
-    border-color: rgba(123,47,255,0.5);
-    box-shadow: 0 0 30px rgba(123,47,255,0.1);
-  }
-
-  .result-card.featured {
-    grid-column: span 2;
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: center;
-    gap: 2rem;
-  }
-  .result-card.featured::before {
-    background: linear-gradient(to bottom, var(--magenta), var(--neon-bright));
-  }
-
-  .card-tag {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 0.7rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--neon-soft);
-    margin-bottom: 0.6rem;
-  }
-  .card-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.8rem;
-    letter-spacing: 1px;
-    margin-bottom: 0.5rem;
-  }
-  .card-desc {
-    font-size: 0.9rem;
-    color: var(--white-dim);
-    line-height: 1.6;
-  }
-
-  .trophy-badge {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 4rem;
-    color: var(--magenta);
-    text-shadow: 0 0 30px var(--magenta);
-    line-height: 1;
-    white-space: nowrap;
-  }
-
-  .win-bar-wrap { margin-top: 2.5rem; }
-  .win-bar-label {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.4rem;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 1px;
-  }
-  .win-bar-track {
-    height: 4px;
-    background: rgba(255,255,255,0.06);
-    border-radius: 2px;
-    overflow: hidden;
-    margin-bottom: 1rem;
-  }
-  .win-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--neon), var(--neon-bright));
-    box-shadow: 0 0 8px var(--neon);
-    width: 0;
-    transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  /* ── NOTICIAS ── */
-  #noticias { background: var(--deep); }
-
-  .news-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 1.5rem;
-    margin-top: 3rem;
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .news-card {
-    background: var(--void);
-    border: 1px solid var(--border);
-    padding: 0;
-    overflow: hidden;
-    opacity: 0;
-    transform: translateY(30px);
-    transition: all 0.5s;
-  }
-  .news-card.visible { opacity: 1; transform: translateY(0); }
-  .news-card:hover { border-color: rgba(123,47,255,0.4); }
-
-  /* Discord-style header */
-  .news-discord-header {
-    display: flex;
-    align-items: center;
-    gap: 0.7rem;
-    padding: 0.9rem 1.2rem;
-    background: rgba(123,47,255,0.08);
-    border-bottom: 1px solid var(--border);
-  }
-  .discord-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--neon), var(--magenta));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1rem;
-    color: white;
-    flex-shrink: 0;
-  }
-  .discord-meta { flex: 1; }
-  .discord-author {
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 700;
-    font-size: 0.85rem;
-    color: var(--neon-bright);
-    letter-spacing: 1px;
-  }
-  .discord-time {
-    font-size: 0.72rem;
-    color: var(--white-dim);
-  }
-  .discord-badge {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    background: rgba(123,47,255,0.3);
-    color: var(--neon-soft);
-    padding: 0.15rem 0.5rem;
-    border-radius: 2px;
-  }
-
-  .news-body { padding: 1.2rem; }
-  .news-type {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 0.7rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--neon-soft);
-    margin-bottom: 0.5rem;
-  }
-  .news-headline {
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 700;
-    font-size: 1.05rem;
-    line-height: 1.4;
-    color: var(--white-cold);
-    margin-bottom: 0.6rem;
-  }
-  .news-text {
-    font-size: 0.875rem;
-    color: var(--white-dim);
-    line-height: 1.6;
-  }
-
-  /* ── RECRUTAMENTO ── */
-  #recrutamento {
-    background: var(--void);
-    position: relative;
-    overflow: hidden;
-  }
-  #recrutamento::before {
-    content: 'RECRUTAMENTO';
-    position: absolute;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(6rem, 18vw, 18rem);
-    color: transparent;
-    -webkit-text-stroke: 1px rgba(123,47,255,0.06);
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    white-space: nowrap;
-    pointer-events: none;
-    user-select: none;
-  }
-
-  .recruit-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: start;
-    max-width: 1200px;
-    margin: 3rem auto 0;
-    position: relative;
-  }
-
-  .recruit-steps { display: flex; flex-direction: column; gap: 1.5rem; }
-
-  .step {
-    display: flex;
-    gap: 1.2rem;
-    align-items: flex-start;
-    opacity: 0;
-    transform: translateX(-30px);
-    transition: all 0.5s;
-  }
-  .step.visible { opacity: 1; transform: translateX(0); }
-
-  .step-num {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 2.5rem;
-    color: transparent;
-    -webkit-text-stroke: 1px var(--neon-bright);
-    text-shadow: 0 0 15px rgba(123,47,255,0.3);
-    line-height: 1;
-    flex-shrink: 0;
-    width: 2.5rem;
-    text-align: right;
-  }
-  .step-content {}
-  .step-title {
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: var(--white-cold);
-    margin-bottom: 0.3rem;
-  }
-  .step-desc { font-size: 0.875rem; color: var(--white-dim); line-height: 1.6; }
-
-  .recruit-form-wrap {
-    background: var(--deep);
-    border: 1px solid var(--border);
-    padding: 2rem;
-    opacity: 0;
-    transform: translateX(30px);
-    transition: all 0.6s;
-  }
-  .recruit-form-wrap.visible { opacity: 1; transform: translateX(0); }
-
-  .form-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 1.8rem;
-    letter-spacing: 2px;
-    margin-bottom: 1.5rem;
-    color: var(--white-cold);
-  }
-
-  .form-group { margin-bottom: 1.2rem; }
-  .form-label {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 0.8rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--white-dim);
-    display: block;
-    margin-bottom: 0.4rem;
-  }
-  .form-input, .form-select, .form-textarea {
-    width: 100%;
-    background: rgba(123,47,255,0.06);
-    border: 1px solid var(--border);
-    color: var(--white-cold);
-    padding: 0.75rem 1rem;
-    font-family: 'Inter', sans-serif;
-    font-size: 0.9rem;
-    outline: none;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    border-radius: 0;
-    appearance: none;
-  }
-  .form-input:focus, .form-select:focus, .form-textarea:focus {
-    border-color: var(--neon-bright);
-    box-shadow: 0 0 12px rgba(123,47,255,0.2);
-  }
-  .form-textarea { resize: vertical; min-height: 100px; }
-  .form-select option { background: var(--deep); }
-
-  .btn-submit {
-    width: 100%;
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 700;
-    font-size: 0.9rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--void);
-    background: linear-gradient(135deg, var(--neon-bright), var(--neon));
-    border: none;
-    padding: 1rem;
-    cursor: pointer;
-    margin-top: 0.5rem;
-    transition: box-shadow 0.2s, transform 0.15s;
-    clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
-  }
-  .btn-submit:hover {
-    box-shadow: 0 0 30px var(--neon);
-    transform: translateY(-2px);
-  }
-
-  /* ── MÍDIA ── */
-  #midia { background: var(--deep); }
-
-  .media-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    grid-template-rows: 200px 200px;
-    gap: 1rem;
-    margin-top: 3rem;
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
-  .media-item {
-    background: var(--purple-dark);
-    border: 1px solid var(--border);
-    position: relative;
-    overflow: hidden;
-    cursor: pointer;
-    opacity: 0;
-    transform: scale(0.97);
-    transition: all 0.5s;
-  }
-  .media-item.visible { opacity: 1; transform: scale(1); }
-  .media-item:hover .media-overlay { opacity: 1; }
-  .media-item:hover .media-thumb { transform: scale(1.05); }
-
-  .media-item.large { grid-row: span 2; }
-
-  .media-thumb {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.4s;
-    display: block;
-  }
-
-  /* placeholder thumbs with gradient */
-  .media-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  .media-placeholder.p1 { background: linear-gradient(135deg, #1A0A2E, #2D1060); }
-  .media-placeholder.p2 { background: linear-gradient(135deg, #0F0718, #1A0A2E); }
-  .media-placeholder.p3 { background: linear-gradient(135deg, #1A0A2E, #0A0A0F); }
-  .media-placeholder.p4 { background: linear-gradient(135deg, #0F0718, #2D1060); }
-  .media-placeholder.p5 { background: linear-gradient(135deg, #2D1060, #1A0A2E); }
-
-  .play-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border: 2px solid rgba(168,85,247,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    color: var(--neon-soft);
-  }
-
-  .media-overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(123,47,255,0.25);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s;
-  }
-  .media-play-btn {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background: var(--neon-bright);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 0 30px var(--neon);
-    font-size: 1.4rem;
-    color: white;
-  }
-
-  .media-caption {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 0.8rem 1rem;
-    background: linear-gradient(transparent, rgba(10,10,15,0.95));
-  }
-  .media-caption-text {
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 600;
-    font-size: 0.85rem;
-    letter-spacing: 1px;
-    color: var(--white-cold);
-  }
-  .media-caption-sub {
-    font-size: 0.75rem;
-    color: var(--neon-soft);
-  }
-
-  /* ── SOCIAL ── */
-  #social {
-    background: var(--void);
-    border-top: 1px solid var(--border);
-  }
-
-  .social-layout {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 4rem;
-    align-items: start;
-    max-width: 1200px;
-    margin: 3rem auto 0;
-  }
-
-  .social-links { display: flex; flex-direction: column; gap: 1rem; }
-
-  .social-link {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1rem 1.2rem;
-    background: var(--deep);
-    border: 1px solid var(--border);
-    text-decoration: none;
-    transition: all 0.2s;
-  }
-  .social-link:hover {
-    border-color: rgba(123,47,255,0.5);
-    box-shadow: 0 0 20px rgba(123,47,255,0.1);
-    transform: translateX(4px);
-  }
-  .social-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    flex-shrink: 0;
-  }
-  .si-x { background: #000; color: #fff; }
-  .si-discord { background: #5865F2; color: #fff; }
-  .si-yt { background: #FF0000; color: #fff; }
-  .si-insta { background: linear-gradient(135deg, #833AB4, #FD1D1D, #FCAF45); color: #fff; }
-
-  .social-link-info { flex: 1; }
-  .social-link-name {
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 700;
-    font-size: 0.9rem;
-    letter-spacing: 1px;
-    color: var(--white-cold);
-  }
-  .social-link-handle { font-size: 0.8rem; color: var(--white-dim); }
-  .social-link-arrow { color: var(--neon-bright); font-size: 1rem; }
-
-  .tweets-feed { display: flex; flex-direction: column; gap: 1rem; }
-
-  .tweet-card {
-    background: var(--deep);
-    border: 1px solid var(--border);
-    padding: 1.2rem;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: all 0.4s;
-  }
-  .tweet-card.visible { opacity: 1; transform: translateY(0); }
-  .tweet-card:hover { border-color: rgba(123,47,255,0.4); }
-
-  .tweet-header { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 0.8rem; }
-  .tweet-avatar {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--neon), var(--magenta));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 0.9rem;
-    flex-shrink: 0;
-  }
-  .tweet-name {
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 700;
-    font-size: 0.9rem;
-    color: var(--white-cold);
-  }
-  .tweet-handle { font-size: 0.8rem; color: var(--white-dim); }
-  .x-logo { margin-left: auto; color: var(--white-dim); font-size: 0.9rem; }
-
-  .tweet-text { font-size: 0.9rem; line-height: 1.6; color: var(--white-cold); }
-  .tweet-text .highlight { color: var(--neon-bright); }
-
-  .tweet-meta {
-    display: flex;
-    gap: 1.5rem;
-    margin-top: 0.8rem;
-    padding-top: 0.8rem;
-    border-top: 1px solid rgba(255,255,255,0.05);
-    font-size: 0.8rem;
-    color: var(--white-dim);
-    font-family: 'Rajdhani', sans-serif;
-  }
-
-  /* ── FOOTER ── */
-  footer {
-    background: var(--deep);
-    border-top: 1px solid var(--border);
-    padding: 3rem clamp(1.5rem, 5vw, 4rem);
-  }
-  .footer-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1.5fr 1fr 1fr;
-    gap: 3rem;
-  }
-  .footer-brand-name {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 2.5rem;
-    letter-spacing: 4px;
-    margin-bottom: 0.5rem;
-  }
-  .footer-brand-name span { color: var(--neon-bright); text-shadow: 0 0 20px var(--neon); }
-  .footer-tagline { font-size: 0.85rem; color: var(--white-dim); line-height: 1.6; max-width: 280px; }
-
-  .footer-col-title {
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 700;
-    font-size: 0.75rem;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: var(--neon-soft);
-    margin-bottom: 1.2rem;
-  }
-  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
-  .footer-links a {
-    font-size: 0.9rem;
-    color: var(--white-dim);
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-  .footer-links a:hover { color: var(--white-cold); }
-
-  .footer-bottom {
-    max-width: 1200px;
-    margin: 2rem auto 0;
-    padding-top: 1.5rem;
-    border-top: 1px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.8rem;
-    color: var(--white-dim);
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-
-  /* ── ANIMATIONS ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* Neon glow pulse for elements */
-  .neon-pulse {
-    animation: neonPulse 3s ease-in-out infinite;
-  }
-  @keyframes neonPulse {
-    0%, 100% { text-shadow: 0 0 20px var(--neon), 0 0 40px rgba(123,47,255,0.5); }
-    50% { text-shadow: 0 0 30px var(--neon), 0 0 60px rgba(123,47,255,0.7), 0 0 100px rgba(123,47,255,0.3); }
-  }
-
-  /* ── MOBILE NAV ── */
-  .mobile-menu {
-    display: none;
-    position: fixed;
-    top: 70px;
-    left: 0;
-    right: 0;
-    background: rgba(10,10,15,0.97);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-    padding: 1.5rem 2rem;
-    z-index: 999;
-    flex-direction: column;
-    gap: 1.2rem;
-  }
-  .mobile-menu.open { display: flex; }
-  .mobile-menu a {
-    font-family: 'Rajdhani', sans-serif;
-    font-weight: 600;
-    font-size: 1.1rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--white-dim);
-    text-decoration: none;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 900px) {
-    .nav-links, .nav-cta { display: none; }
-    .hamburger { display: flex; }
-
-    .results-layout { grid-template-columns: 1fr; }
-    .result-card.featured { grid-column: span 1; grid-template-columns: 1fr; }
-    .trophy-badge { font-size: 2.5rem; }
-
-    .news-grid { grid-template-columns: 1fr; }
-
-    .recruit-layout { grid-template-columns: 1fr; gap: 2rem; }
-
-    .media-grid {
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: 160px 160px 160px;
-    }
-    .media-item.large { grid-row: span 1; }
-
-    .social-layout { grid-template-columns: 1fr; gap: 2rem; }
-
-    .footer-inner { grid-template-columns: 1fr; gap: 2rem; }
-    .footer-bottom { flex-direction: column; text-align: center; }
-  }
-
-  @media (max-width: 560px) {
-    .media-grid { grid-template-columns: 1fr; grid-template-rows: auto; }
-    .media-item { height: 180px; }
-  }
-
-  /* Reduced motion */
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
-  }
-
-  /* max-width centering for big sections */
-  .section-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --bg: #080810;
+  --surface: #0e0e1a;
+  --purple: #7c3aed;
+  --glow: #a78bfa;
+  --dim: #6b6b8a;
+  --text: #e8e6f0;
+  --muted: #9d9bb5;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Space Grotesk', sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* subtle noise texture */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9000;
+  opacity: 0.5;
+}
+
+/* ── HEADER ── */
+header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 1.4rem clamp(1.5rem, 6vw, 5rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  letter-spacing: 5px;
+  color: var(--text);
+  text-decoration: none;
+}
+.logo em {
+  color: var(--glow);
+  font-style: normal;
+  text-shadow: 0 0 16px var(--purple);
+}
+
+.header-discord {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--glow);
+  text-decoration: none;
+  border: 1px solid rgba(124,58,237,0.4);
+  padding: 0.5rem 1.2rem;
+  transition: all 0.2s;
+}
+.header-discord:hover {
+  background: rgba(124,58,237,0.15);
+  border-color: var(--glow);
+  box-shadow: 0 0 16px rgba(124,58,237,0.3);
+}
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 7rem clamp(1.5rem, 6vw, 5rem) 5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* radial background glow */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(700px, 100vw);
+  height: min(700px, 100vw);
+  background: radial-gradient(circle, rgba(124,58,237,0.14) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* horizontal line accent */
+.hero-line {
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, transparent, var(--purple));
+  margin: 0 auto 2.5rem;
+  opacity: 0;
+  animation: fadeIn 0.6s 0.1s forwards;
+}
+
+.hero-tag {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 1.8rem;
+  opacity: 0;
+  animation: fadeIn 0.6s 0.2s forwards;
+}
+
+.hero-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(5rem, 22vw, 16rem);
+  line-height: 0.88;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  position: relative;
+  opacity: 0;
+  animation: fadeIn 0.7s 0.35s forwards;
+}
+
+/* The V — the signature element */
+.hero-name .v {
+  color: var(--glow);
+  display: inline-block;
+  text-shadow:
+    0 0 40px rgba(124,58,237,0.8),
+    0 0 80px rgba(124,58,237,0.4),
+    0 0 160px rgba(124,58,237,0.15);
+  animation: vGlow 3s ease-in-out infinite 1s;
+}
+@keyframes vGlow {
+  0%, 100% { text-shadow: 0 0 40px rgba(124,58,237,0.8), 0 0 80px rgba(124,58,237,0.4); }
+  50%       { text-shadow: 0 0 60px rgba(167,139,250,1),  0 0 120px rgba(124,58,237,0.6), 0 0 200px rgba(124,58,237,0.2); }
+}
+
+.hero-slash {
+  display: block;
+  width: clamp(40px, 8vw, 80px);
+  height: 1px;
+  background: rgba(167,139,250,0.3);
+  margin: 1.6rem auto;
+  opacity: 0;
+  animation: fadeIn 0.6s 0.55s forwards;
+}
+
+.hero-desc {
+  font-size: clamp(1rem, 2.2vw, 1.25rem);
+  font-weight: 400;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 520px;
+  margin: 0 auto 3rem;
+  opacity: 0;
+  animation: fadeIn 0.6s 0.65s forwards;
+}
+.hero-desc strong {
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* THE CTA */
+.cta-wrap {
+  opacity: 0;
+  animation: fadeIn 0.7s 0.85s forwards;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.cta-discord {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #fff;
+  background: var(--purple);
+  text-decoration: none;
+  padding: 1rem 2.4rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+.cta-discord::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 60%);
+  pointer-events: none;
+}
+.cta-discord::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(135deg, var(--glow), var(--purple));
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.cta-discord:hover { transform: translateY(-3px); }
+.cta-discord:hover::after { opacity: 1; }
+.cta-discord:hover { box-shadow: 0 8px 40px rgba(124,58,237,0.5); }
+
+.discord-icon {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.cta-sub {
+  font-size: 0.78rem;
+  color: var(--dim);
+  letter-spacing: 1px;
+}
+
+/* ── DIVIDER ── */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0 clamp(1.5rem, 6vw, 5rem);
+  max-width: 900px;
+  margin: 0 auto;
+}
+.divider-line { flex: 1; height: 1px; background: rgba(124,58,237,0.15); }
+.divider-mark {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 4px;
+  color: var(--dim);
+}
+
+/* ── ABOUT ── */
+.about {
+  padding: 6rem clamp(1.5rem, 6vw, 5rem);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  margin-top: 3rem;
+}
+
+.about-block {
+  padding: 2.2rem 2rem;
+  background: var(--surface);
+  border: 1px solid rgba(124,58,237,0.1);
+  transition: border-color 0.3s;
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.5s, transform 0.5s, border-color 0.3s;
+}
+.about-block.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.about-block:hover { border-color: rgba(124,58,237,0.3); }
+
+.block-icon {
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+.block-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+  letter-spacing: 0.3px;
+}
+.block-text {
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+/* ── MANIFESTO ── */
+.manifesto {
+  padding: 5rem clamp(1.5rem, 6vw, 5rem) 4rem;
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.manifesto-quote {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.2rem, 5.5vw, 4rem);
+  line-height: 1.1;
+  letter-spacing: 1px;
+  color: var(--text);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s, transform 0.7s;
+}
+.manifesto-quote.visible { opacity: 1; transform: translateY(0); }
+.manifesto-quote span { color: var(--glow); }
+
+.manifesto-sub {
+  margin-top: 1.5rem;
+  font-size: 0.95rem;
+  color: var(--dim);
+  line-height: 1.7;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s 0.15s, transform 0.6s 0.15s;
+}
+.manifesto-sub.visible { opacity: 1; transform: translateY(0); }
+
+/* ── FINAL CTA ── */
+.final-cta {
+  padding: 6rem clamp(1.5rem, 6vw, 5rem) 5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.final-cta::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 300px;
+  background: radial-gradient(ellipse at bottom, rgba(124,58,237,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.final-label {
+  font-size: 0.75rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: all 0.5s;
+}
+.final-label.visible { opacity: 1; transform: translateY(0); }
+
+.final-heading {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.8rem, 8vw, 5.5rem);
+  line-height: 0.95;
+  letter-spacing: 2px;
+  margin-bottom: 1.2rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s 0.1s;
+}
+.final-heading.visible { opacity: 1; transform: translateY(0); }
+.final-heading span { color: var(--glow); }
+
+.final-text {
+  font-size: 1rem;
+  color: var(--muted);
+  max-width: 420px;
+  line-height: 1.7;
+  margin-bottom: 2.5rem;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: all 0.5s 0.2s;
+}
+.final-text.visible { opacity: 1; transform: translateY(0); }
+
+.final-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+  background: var(--purple);
+  text-decoration: none;
+  padding: 1.1rem 2.8rem;
+  position: relative;
+  transition: transform 0.2s, box-shadow 0.3s;
+  opacity: 0;
+  transform: translateY(16px);
+}
+.final-btn.visible {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.5s 0.3s, transform 0.5s 0.3s, box-shadow 0.2s;
+}
+.final-btn:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 12px 50px rgba(124,58,237,0.5);
+}
+
+/* ── FOOTER ── */
+footer {
+  padding: 2rem clamp(1.5rem, 6vw, 5rem);
+  border-top: 1px solid rgba(124,58,237,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.footer-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem;
+  letter-spacing: 4px;
+  color: var(--dim);
+  text-decoration: none;
+}
+.footer-logo em { color: var(--purple); font-style: normal; }
+.footer-copy {
+  font-size: 0.78rem;
+  color: var(--dim);
+  letter-spacing: 0.5px;
+}
+
+/* ── UTILS ── */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 640px) {
+  .about-grid { grid-template-columns: 1fr; }
+  .header-discord { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav id="navbar">
-  <a href="#" class="nav-logo">A<span>V</span>ERON</a>
-  <ul class="nav-links">
-    <li><a href="#noticias">Notícias</a></li>
-    <li><a href="#recrutamento">Recrutamento</a></li>
-    <li><a href="#midia">Mídia</a></li>
-    <li><a href="#social">Social</a></li>
-  </ul>
-  <a href="https://discord.gg/SNDvGegF4" target="_blank" class="nav-cta">Entrar no Discord</a>
-  <button class="hamburger" id="hamburger" aria-label="Menu">
-    <span></span><span></span><span></span>
-  </button>
-</nav>
-
-<!-- MOBILE MENU -->
-<div class="mobile-menu" id="mobileMenu">
-  <a href="#noticias" onclick="closeMenu()">Notícias</a>
-  <a href="#recrutamento" onclick="closeMenu()">Recrutamento</a>
-  <a href="#midia" onclick="closeMenu()">Mídia</a>
-  <a href="#social" onclick="closeMenu()">Social</a>
-  <a href="https://discord.gg/SNDvGegF4" target="_blank">→ Entrar no Discord</a>
-</div>
+<header>
+  <a href="#" class="logo">A<em>V</em>ERON</a>
+  <a href="https://discord.gg/SNDvGegF4" target="_blank" class="header-discord">Entrar no Discord</a>
+</header>
 
 <!-- HERO -->
-<section id="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-grid"></div>
-  <div class="hero-vmark">V</div>
+<section class="hero">
+  <div class="hero-line"></div>
+  <p class="hero-tag">Organização de Esports · Brasil</p>
 
-  <div class="hero-content">
-    <p class="hero-eyebrow">Organização de Esports — Est. 2024</p>
-    <h1 class="hero-title">A<span>V</span>ERON</h1>
-    <p class="hero-slogan">Dominate or Be Forgotten</p>
-    <div class="hero-buttons">
-      <a href="#recrutamento" class="btn-primary">Entrar na Organização</a>
+  <h1 class="hero-name">A<span class="v">V</span>ERON</h1>
 
-    </div>
-  </div>
+  <span class="hero-slash"></span>
 
-  <div class="hero-scroll">
-    <span>Scroll</span>
-    <div class="scroll-line"></div>
+  <p class="hero-desc">
+    Somos uma <strong>organização competitiva</strong> construída por jogadores sérios, para jogadores sérios.
+    Sem enrolação — só performance, comunidade e evolução constante.
+  </p>
+
+  <div class="cta-wrap">
+    <a href="https://discord.gg/SNDvGegF4" target="_blank" class="cta-discord">
+      <svg class="discord-icon" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
+      </svg>
+      Entrar no Discord
+    </a>
+    <span class="cta-sub">Gratuito · Comunidade ativa · Competições semanais</span>
   </div>
 </section>
 
-<!-- STATS RIBBON -->
-<div class="stats-ribbon">
-  <div class="stats-ribbon-inner">
-    <div class="stat-item">
-      <div class="stat-num">47+</div>
-      <div class="stat-label">Vitórias em X-Clã</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">12</div>
-      <div class="stat-label">Campeonatos</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">98%</div>
-      <div class="stat-label">Win Rate</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">23</div>
-      <div class="stat-label">Atletas Ativos</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">#1</div>
-      <div class="stat-label">Ranking Nacional</div>
-    </div>
-  </div>
+<div class="divider">
+  <div class="divider-line"></div>
+  <div class="divider-mark">AVERON</div>
+  <div class="divider-line"></div>
 </div>
 
+<!-- ABOUT -->
+<section class="about">
+  <p style="font-size:0.75rem;letter-spacing:4px;text-transform:uppercase;color:var(--dim);margin-bottom:0.6rem;">O que é a AVERON</p>
+  <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,5vw,3.2rem);letter-spacing:2px;line-height:1.05;">Uma org feita pra<br>quem leva a sério</h2>
 
-
-<!-- NOTÍCIAS -->
-<section id="noticias">
-  <div class="section-inner">
-    <p class="section-eyebrow">Atualizações</p>
-    <h2 class="section-title">Notícias &<br>Avisos</h2>
-    <p class="section-desc">Fique por dentro de tudo que acontece na AVERON — convocações, eventos, resultados e anúncios oficiais.</p>
-
-    <div class="news-grid">
-
-      <div class="news-card">
-        <div class="news-discord-header">
-          <div class="discord-avatar">A</div>
-          <div class="discord-meta">
-            <div class="discord-author">AVERON Official</div>
-            <div class="discord-time">Hoje às 14:32</div>
-          </div>
-          <span class="discord-badge">Oficial</span>
-        </div>
-        <div class="news-body">
-          <div class="news-type">📣 Convocação</div>
-          <div class="news-headline">Nova convocação para a X-Clã Season 5 aberta</div>
-          <div class="news-text">Estamos aceitando inscrições para integrar o plantel oficial. Envie seus clipes e passe pelo processo seletivo. Vagas limitadas — inscreva-se agora.</div>
-        </div>
-      </div>
-
-      <div class="news-card">
-        <div class="news-discord-header">
-          <div class="discord-avatar">A</div>
-          <div class="discord-meta">
-            <div class="discord-author">AVERON Official</div>
-            <div class="discord-time">Ontem às 21:00</div>
-          </div>
-          <span class="discord-badge">Resultado</span>
-        </div>
-        <div class="news-body">
-          <div class="news-type">🏆 Vitória</div>
-          <div class="news-headline">AVERON vence o clã VORTEX e mantém série invicta</div>
-          <div class="news-text">Partida acirrada de 3 sets. Nossos atletas demonstraram domínio tático e superaram o adversário em todos os mapas disputados.</div>
-        </div>
-      </div>
-
-      <div class="news-card">
-        <div class="news-discord-header">
-          <div class="discord-avatar">A</div>
-          <div class="discord-meta">
-            <div class="discord-author">AVERON Official</div>
-            <div class="discord-time">2 dias atrás</div>
-          </div>
-          <span class="discord-badge">Evento</span>
-        </div>
-        <div class="news-body">
-          <div class="news-type">📅 Evento</div>
-          <div class="news-headline">AVERON no Torneio Convidados — data confirmada</div>
-          <div class="news-text">Participaremos do maior torneio convite do mês. Acompanhe ao vivo pelo nosso Discord e torça pelo nosso time.</div>
-        </div>
-      </div>
-
-      <div class="news-card">
-        <div class="news-discord-header">
-          <div class="discord-avatar">A</div>
-          <div class="discord-meta">
-            <div class="discord-author">AVERON Official</div>
-            <div class="discord-time">3 dias atrás</div>
-          </div>
-          <span class="discord-badge">Aviso</span>
-        </div>
-        <div class="news-body">
-          <div class="news-type">⚠️ Aviso Oficial</div>
-          <div class="news-headline">Atualização nas regras de conduta da organização</div>
-          <div class="news-text">Todos os membros devem ler as novas diretrizes de conduta publicadas no canal #regras do Discord. Validade imediata.</div>
-        </div>
-      </div>
-
-      <div class="news-card">
-        <div class="news-discord-header">
-          <div class="discord-avatar">A</div>
-          <div class="discord-meta">
-            <div class="discord-author">AVERON Official</div>
-            <div class="discord-time">4 dias atrás</div>
-          </div>
-          <span class="discord-badge">Destaque</span>
-        </div>
-        <div class="news-body">
-          <div class="news-type">⭐ Destaque</div>
-          <div class="news-headline">Jogador destaque do mês: @Zk_Shadow com 94% winrate</div>
-          <div class="news-text">Performance excepcional nas últimas rodadas. Zk_Shadow lidera o ranking interno e é eleito MVP da temporada regular.</div>
-        </div>
-      </div>
-
-      <div class="news-card">
-        <div class="news-discord-header">
-          <div class="discord-avatar">A</div>
-          <div class="discord-meta">
-            <div class="discord-author">AVERON Official</div>
-            <div class="discord-time">5 dias atrás</div>
-          </div>
-          <span class="discord-badge">Parceria</span>
-        </div>
-        <div class="news-body">
-          <div class="news-type">🤝 Parceria</div>
-          <div class="news-headline">AVERON anuncia nova parceria estratégica</div>
-          <div class="news-text">Expansão oficial da organização com novos recursos para atletas, infraestrutura de treino e suporte competitivo.</div>
-        </div>
-      </div>
-
+  <div class="about-grid">
+    <div class="about-block">
+      <span class="block-icon">⚡</span>
+      <div class="block-title">Competição real</div>
+      <div class="block-text">Participamos de torneios, X-Clãs e eventos competitivos regularmente. Se você quer jogar pra vencer, é aqui.</div>
+    </div>
+    <div class="about-block">
+      <span class="block-icon">🤝</span>
+      <div class="block-title">Comunidade unida</div>
+      <div class="block-text">Um Discord ativo com jogadores de todos os níveis. Partidas internas, calls de voz e muito conteúdo todo dia.</div>
+    </div>
+    <div class="about-block">
+      <span class="block-icon">📈</span>
+      <div class="block-title">Evolução constante</div>
+      <div class="block-text">Análise de gameplay, troca de conhecimento e ambiente que te força a melhorar. Cada dia um nível acima.</div>
+    </div>
+    <div class="about-block">
+      <span class="block-icon">🎯</span>
+      <div class="block-title">Recrutamento aberto</div>
+      <div class="block-text">Qualquer um pode entrar na comunidade. Os melhores são convidados pro plantel competitivo. Prove seu valor.</div>
     </div>
   </div>
 </section>
 
-<!-- RECRUTAMENTO -->
-<section id="recrutamento">
-  <div class="section-inner">
-    <p class="section-eyebrow">Faça parte</p>
-    <h2 class="section-title">Recrutamento</h2>
-    <p class="section-desc">Você tem o que é preciso para representar AVERON? Passe pelo nosso processo seletivo e prove seu nível.</p>
+<div class="divider">
+  <div class="divider-line"></div>
+  <div class="divider-mark">×</div>
+  <div class="divider-line"></div>
+</div>
 
-    <div class="recruit-layout">
-      <div class="recruit-steps">
-        <div class="step">
-          <div class="step-num">01</div>
-          <div class="step-content">
-            <div class="step-title">Preencha o formulário</div>
-            <div class="step-desc">Informe seus dados, nome de usuário e modalidade de interesse para iniciar o processo seletivo.</div>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-num">02</div>
-          <div class="step-content">
-            <div class="step-title">Envie seus clipes</div>
-            <div class="step-desc">Compartilhe seus melhores highlights — partidas ranqueadas, plays difíceis e situações que demonstrem sua habilidade e inteligência de jogo.</div>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-num">03</div>
-          <div class="step-content">
-            <div class="step-title">Análise técnica</div>
-            <div class="step-desc">Nossa comissão técnica avalia cada candidatura individualmente. Postura, consistência e mentalidade competitiva são critérios fundamentais.</div>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-num">04</div>
-          <div class="step-content">
-            <div class="step-title">Teste ao vivo</div>
-            <div class="step-desc">Candidatos aprovados são convocados para partidas de avaliação ao vivo contra membros da organização.</div>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-num">05</div>
-          <div class="step-content">
-            <div class="step-title">Bem-vindo à AVERON</div>
-            <div class="step-desc">Aprovados recebem o convite oficial, acesso ao Discord restrito e integração ao plantel. A jornada começa aqui.</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="recruit-form-wrap" id="recruitForm">
-        <div class="form-title">Candidatura</div>
-
-        <div class="form-group">
-          <label class="form-label">Nome de usuário</label>
-          <input type="text" class="form-input" placeholder="Seu nick no jogo">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Discord</label>
-          <input type="text" class="form-input" placeholder="usuario#0000">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Modalidade</label>
-          <select class="form-select">
-            <option value="">Selecione a modalidade</option>
-            <option>Free Fire</option>
-            <option>Valorant</option>
-            <option>CS2</option>
-            <option>Fortnite</option>
-            <option>Rainbow Six</option>
-            <option>Outra</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Rank atual</label>
-          <input type="text" class="form-input" placeholder="Ex: Diamante III, Predator...">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Link dos clipes</label>
-          <input type="text" class="form-input" placeholder="YouTube, Streamable, Google Drive...">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Sobre você</label>
-          <textarea class="form-textarea" placeholder="Descreva sua experiência competitiva, disponibilidade e por que quer fazer parte da AVERON..."></textarea>
-        </div>
-
-        <a href="https://discord.gg/SNDvGegF4" target="_blank" class="btn-submit" style="display:block;text-align:center;text-decoration:none;padding:1rem;">
-          Enviar Candidatura via Discord →
-        </a>
-      </div>
-    </div>
-  </div>
+<!-- MANIFESTO -->
+<section class="manifesto">
+  <p class="manifesto-quote">"Aqui não tem espaço pra <span>mediocridade.</span> Só entra quem quer <span>crescer.</span>"</p>
+  <p class="manifesto-sub">
+    AVERON foi criada para reunir jogadores que entendem que esports é mais que diversão — é disciplina, dedicação e resultado.
+  </p>
 </section>
 
-<!-- MÍDIA -->
-<section id="midia">
-  <div class="section-inner">
-    <p class="section-eyebrow">Conteúdo</p>
-    <h2 class="section-title">Mídia &<br>Destaques</h2>
-
-    <div class="media-grid">
-
-      <div class="media-item large">
-        <div class="media-placeholder p1" style="height:100%;">
-          <div class="play-icon">▶</div>
-          <span style="font-family:'Rajdhani',sans-serif;font-size:0.8rem;letter-spacing:2px;color:var(--neon-soft);text-transform:uppercase">Highlights S4</span>
-        </div>
-        <div class="media-overlay">
-          <div class="media-play-btn">▶</div>
-        </div>
-        <div class="media-caption">
-          <div class="media-caption-text">AVERON — X-Clã Season 4 Highlights</div>
-          <div class="media-caption-sub">12 min · 48K views</div>
-        </div>
-      </div>
-
-      <div class="media-item">
-        <div class="media-placeholder p2" style="height:100%;">
-          <div class="play-icon">▶</div>
-        </div>
-        <div class="media-overlay"><div class="media-play-btn">▶</div></div>
-        <div class="media-caption">
-          <div class="media-caption-text">Zk_Shadow — Clutch 1v5</div>
-          <div class="media-caption-sub">45s · 22K views</div>
-        </div>
-      </div>
-
-      <div class="media-item">
-        <div class="media-placeholder p3" style="height:100%;">
-          <div class="play-icon">▶</div>
-        </div>
-        <div class="media-overlay"><div class="media-play-btn">▶</div></div>
-        <div class="media-caption">
-          <div class="media-caption-text">Copa Latam — semifinal</div>
-          <div class="media-caption-sub">8 min · 15K views</div>
-        </div>
-      </div>
-
-      <div class="media-item">
-        <div class="media-placeholder p4" style="height:100%;">
-          <div class="play-icon">▶</div>
-        </div>
-        <div class="media-overlay"><div class="media-play-btn">▶</div></div>
-        <div class="media-caption">
-          <div class="media-caption-text">Treino tático — bastidores</div>
-          <div class="media-caption-sub">6 min · 9K views</div>
-        </div>
-      </div>
-
-      <div class="media-item">
-        <div class="media-placeholder p5" style="height:100%;">
-          <div class="play-icon">▶</div>
-        </div>
-        <div class="media-overlay"><div class="media-play-btn">▶</div></div>
-        <div class="media-caption">
-          <div class="media-caption-text">MVP montage — Season 3</div>
-          <div class="media-caption-sub">3 min · 31K views</div>
-        </div>
-      </div>
-
-    </div>
-  </div>
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <p class="final-label">Próximo passo</p>
+  <h2 class="final-heading">Entre no<br><span>Discord</span><br>agora</h2>
+  <p class="final-text">O servidor está aberto. A comunidade te espera. Vem fazer parte de algo maior.</p>
+  <a href="https://discord.gg/SNDvGegF4" target="_blank" class="final-btn">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
+    </svg>
+    discord.gg/SNDvGegF4
+  </a>
 </section>
 
-<!-- SOCIAL -->
-<section id="social">
-  <div class="section-inner">
-    <p class="section-eyebrow">Redes</p>
-    <h2 class="section-title">Siga a<br>AVERON</h2>
-
-    <div class="social-layout">
-      <div>
-        <div class="social-links">
-          <a href="#" class="social-link">
-            <div class="social-icon si-x">𝕏</div>
-            <div class="social-link-info">
-              <div class="social-link-name">X (Twitter)</div>
-              <div class="social-link-handle">@AveronOrg</div>
-            </div>
-            <span class="social-link-arrow">→</span>
-          </a>
-          <a href="https://discord.gg/SNDvGegF4" target="_blank" class="social-link">
-            <div class="social-icon si-discord">⚙</div>
-            <div class="social-link-info">
-              <div class="social-link-name">Discord</div>
-              <div class="social-link-handle">discord.gg/SNDvGegF4</div>
-            </div>
-            <span class="social-link-arrow">→</span>
-          </a>
-          <a href="#" class="social-link">
-            <div class="social-icon si-yt">▶</div>
-            <div class="social-link-info">
-              <div class="social-link-name">YouTube</div>
-              <div class="social-link-handle">AVERON Esports</div>
-            </div>
-            <span class="social-link-arrow">→</span>
-          </a>
-          <a href="#" class="social-link">
-            <div class="social-icon si-insta">📸</div>
-            <div class="social-link-info">
-              <div class="social-link-name">Instagram</div>
-              <div class="social-link-handle">@averonorg</div>
-            </div>
-            <span class="social-link-arrow">→</span>
-          </a>
-        </div>
-      </div>
-
-      <div class="tweets-feed">
-        <p style="font-family:'Rajdhani',sans-serif;font-size:0.8rem;letter-spacing:2px;text-transform:uppercase;color:var(--white-dim);margin-bottom:0.5rem;">Posts recentes</p>
-
-        <div class="tweet-card">
-          <div class="tweet-header">
-            <div class="tweet-avatar">A</div>
-            <div>
-              <div class="tweet-name">AVERON</div>
-              <div class="tweet-handle">@AveronOrg · 2h</div>
-            </div>
-            <span class="x-logo">𝕏</span>
-          </div>
-          <div class="tweet-text">Mais um X-Clã encerrado. Mais uma vitória. <span class="highlight">#AVERON</span> não para. Série invicta continua. 🔥 <span class="highlight">#DominateOrBeForgotten</span></div>
-          <div class="tweet-meta">
-            <span>♥ 284</span>
-            <span>↻ 91</span>
-            <span>💬 37</span>
-          </div>
-        </div>
-
-        <div class="tweet-card">
-          <div class="tweet-header">
-            <div class="tweet-avatar">A</div>
-            <div>
-              <div class="tweet-name">AVERON</div>
-              <div class="tweet-handle">@AveronOrg · 1d</div>
-            </div>
-            <span class="x-logo">𝕏</span>
-          </div>
-          <div class="tweet-text">📢 RECRUTAMENTO ABERTO. Se você tem habilidade e mentalidade competitiva, envie sua candidatura agora. Só entra quem prova. Link na bio 🔗 <span class="highlight">#Recrutamento #Esports</span></div>
-          <div class="tweet-meta">
-            <span>♥ 512</span>
-            <span>↻ 203</span>
-            <span>💬 88</span>
-          </div>
-        </div>
-
-        <div class="tweet-card">
-          <div class="tweet-header">
-            <div class="tweet-avatar">A</div>
-            <div>
-              <div class="tweet-name">AVERON</div>
-              <div class="tweet-handle">@AveronOrg · 2d</div>
-            </div>
-            <span class="x-logo">𝕏</span>
-          </div>
-          <div class="tweet-text">Copa Latam 2024 — Top 3 confirmado. Primeira participação internacional, e já no pódio. Isso é <span class="highlight">#AVERON</span>. 🏆🇧🇷</div>
-          <div class="tweet-meta">
-            <span>♥ 1.2K</span>
-            <span>↻ 441</span>
-            <span>💬 156</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
 <footer>
-  <div class="footer-inner">
-    <div>
-      <div class="footer-brand-name">A<span>V</span>ERON</div>
-      <p class="footer-tagline">Organização de esports brasileira focada em excelência competitiva, desenvolvimento de atletas e domínio absoluto no cenário.</p>
-    </div>
-    <div>
-      <div class="footer-col-title">Navegação</div>
-      <ul class="footer-links">
-        <li><a href="#noticias">Notícias</a></li>
-        <li><a href="#recrutamento">Recrutamento</a></li>
-        <li><a href="#midia">Mídia</a></li>
-        <li><a href="#social">Social</a></li>
-      </ul>
-    </div>
-    <div>
-      <div class="footer-col-title">Comunidade</div>
-      <ul class="footer-links">
-        <li><a href="https://discord.gg/SNDvGegF4" target="_blank">Discord Oficial</a></li>
-        <li><a href="#">X (Twitter)</a></li>
-        <li><a href="#">YouTube</a></li>
-        <li><a href="#">Instagram</a></li>
-        <li><a href="#recrutamento">Candidatura</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <span>© 2024 AVERON Esports. Todos os direitos reservados.</span>
-    <span style="color:var(--neon-bright)">Dominate or Be Forgotten</span>
-  </div>
+  <a href="#" class="footer-logo">A<em>V</em>ERON</a>
+  <span class="footer-copy">© 2024 AVERON Esports · Todos os direitos reservados</span>
 </footer>
 
 <script>
-  // Mobile menu
-  const hamburger = document.getElementById('hamburger');
-  const mobileMenu = document.getElementById('mobileMenu');
-  hamburger.addEventListener('click', () => {
-    mobileMenu.classList.toggle('open');
-  });
-  function closeMenu() { mobileMenu.classList.remove('open'); }
-
-  // Nav scroll effect
-  const navbar = document.getElementById('navbar');
-  window.addEventListener('scroll', () => {
-    navbar.style.background = window.scrollY > 50
-      ? 'rgba(10,10,15,0.97)'
-      : 'rgba(10,10,15,0.85)';
-  });
-
-  // Intersection observer for scroll animations
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        // Animate bars
-        if (entry.target.classList.contains('result-card')) {
-          entry.target.querySelectorAll('.win-bar-fill').forEach(bar => {
-            setTimeout(() => {
-              bar.style.width = bar.dataset.width + '%';
-            }, 200);
-          });
-        }
-      }
-    });
+  // scroll reveal
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
   }, { threshold: 0.15 });
 
   document.querySelectorAll(
-    '.stat-item, .result-card, .news-card, .step, .recruit-form-wrap, .media-item, .tweet-card'
-  ).forEach(el => observer.observe(el));
-
-  // Stagger delays
-  document.querySelectorAll('.stat-item').forEach((el, i) => {
-    el.style.transitionDelay = `${i * 0.08}s`;
-  });
-  document.querySelectorAll('.news-card').forEach((el, i) => {
-    el.style.transitionDelay = `${i * 0.08}s`;
-  });
-  document.querySelectorAll('.step').forEach((el, i) => {
-    el.style.transitionDelay = `${i * 0.1}s`;
-  });
-  document.querySelectorAll('.media-item').forEach((el, i) => {
-    el.style.transitionDelay = `${i * 0.07}s`;
-  });
-  document.querySelectorAll('.tweet-card').forEach((el, i) => {
-    el.style.transitionDelay = `${i * 0.1}s`;
-  });
-  document.querySelectorAll('.result-card').forEach((el, i) => {
-    el.style.transitionDelay = `${i * 0.1}s`;
+    '.about-block, .manifesto-quote, .manifesto-sub, .final-label, .final-heading, .final-text, .final-btn'
+  ).forEach((el, i) => {
+    if (el.classList.contains('about-block')) {
+      el.style.transitionDelay = `${i % 4 * 0.08}s`;
+    }
+    io.observe(el);
   });
 </script>
 </body>
